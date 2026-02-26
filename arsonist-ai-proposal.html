@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsonist AI — Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --surface-2: #19191d;
+    --border: #2a2a30;
+    --border-hover: #3a3a42;
+    --text: #ececef;
+    --text-muted: #8b8b96;
+    --accent: #FF4000;
+    --accent-dim: rgba(255, 64, 0, 0.12);
+    --accent-glow: rgba(255, 64, 0, 0.25);
+    --red: #ef4444;
+    --green: #22c55e;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand { display: flex; align-items: center; }
+
+  .brand-wordmark { height: 30px; }
+  .brand-wordmark svg { height: 30px; width: auto; }
+
+  .flame-mark {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .flame-mark svg { width: 56px; height: 56px; }
+
+  .header-meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .header-meta strong { color: var(--text); font-weight: 600; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-draft { background: var(--accent-dim); color: var(--accent); }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── Title area ── */
+  .title-block { margin-bottom: 48px; }
+
+  .title-block h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .title-block p {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 560px;
+  }
+
+  /* ── Editable fields ── */
+  [contenteditable] {
+    outline: none;
+    border-radius: var(--radius-sm);
+    transition: box-shadow 0.2s, background 0.2s;
+    padding: 1px 4px;
+    margin: -1px -4px;
+  }
+
+  [contenteditable]:hover {
+    background: var(--accent-dim);
+  }
+
+  [contenteditable]:focus {
+    background: var(--accent-dim);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+
+  [contenteditable].placeholder-active { color: var(--text-muted); font-style: italic; }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 40px;
+    animation: fade-up 0.5s ease both;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.2s; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border-hover); }
+
+  /* ── Two-column grid ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .field-value {
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 24px;
+  }
+
+  /* ── Scope items ── */
+  .scope-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .scope-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: default;
+  }
+
+  .scope-item:hover {
+    border-color: var(--border-hover);
+    transform: translateX(2px);
+  }
+
+  .scope-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .scope-check.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .scope-check svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: white;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s;
+  }
+
+  .scope-check.checked svg { opacity: 1; transform: scale(1); }
+
+  .scope-text { flex: 1; }
+  .scope-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .scope-desc { font-size: 13px; color: var(--text-muted); }
+
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 100px 24px 1fr;
+    gap: 0 16px;
+    padding: 14px 0;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .timeline-row:last-child { border-bottom: none; }
+
+  .timeline-week {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 2px solid var(--accent);
+    justify-self: center;
+    position: relative;
+  }
+
+  .timeline-row:not(:last-child) .timeline-dot::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 22px;
+    background: var(--border);
+  }
+
+  .timeline-label { font-size: 14px; font-weight: 500; }
+
+  /* ── Pricing ── */
+  .pricing-table { width: 100%; border-collapse: collapse; }
+
+  .pricing-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pricing-table th:last-child { text-align: right; }
+
+  .pricing-table td {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .pricing-table td:last-child {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .pricing-table .item-desc { color: var(--text-muted); font-size: 13px; }
+
+  .pricing-total-row td {
+    border-bottom: none;
+    padding-top: 18px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .pricing-total-row td:last-child {
+    color: var(--accent);
+    font-size: 20px;
+  }
+
+  .price-input {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 14px;
+    text-align: right;
+    width: 100%;
+    outline: none;
+    padding: 2px 4px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .price-input:hover { background: var(--accent-dim); }
+  .price-input:focus { background: var(--accent-dim); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+  /* ── Terms ── */
+  .terms-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .terms-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .terms-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  /* ── Accept ── */
+  .accept-section {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.06), rgba(239, 68, 68, 0.04));
+    border: 1px solid var(--accent-glow);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+  }
+
+  .accept-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .accept-section p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .sig-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  .sig-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .sig-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .sig-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  .sig-input::placeholder { color: var(--text-muted); }
+
+  .btn-accept {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, var(--accent), #cc3300);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    box-shadow: 0 4px 24px rgba(255, 64, 0, 0.3);
+  }
+
+  .btn-accept:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 32px rgba(255, 64, 0, 0.4);
+  }
+
+  .btn-accept:active { transform: translateY(0); }
+
+  .btn-accept.accepted {
+    background: linear-gradient(135deg, var(--green), #16a34a);
+    box-shadow: 0 4px 24px rgba(34, 197, 94, 0.3);
+    pointer-events: none;
+  }
+
+  /* ── Confetti canvas ── */
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; color: #111; }
+    .card { border-color: #ddd; }
+    .btn-accept { display: none; }
+    .scope-check { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 24px 16px 60px; }
+    .header { flex-direction: column; gap: 16px; }
+    .header-meta { text-align: left; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .sig-row { grid-template-columns: 1fr; }
+    .title-block h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-wordmark">
+        <svg width="400" height="89" viewBox="0 0 400 89" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M400 25.3443V35.5237H392.023V77.9749H400V88.1542H373.554V77.9749H381.444V35.5237H373.554V25.3443H400Z" fill="#FF4000"/>
+          <path d="M369.146 88.1543H357.315L352.301 74.7744H324.02L318.962 88.1543H307.438L331.936 25.3443H344.648L369.146 88.1543ZM338.138 37.1684L327.802 64.7728H348.518L338.138 37.1684Z" fill="#FF4000"/>
+          <path d="M311.846 41.355V50.679H300.192V78.6958V88.1543H290.417V50.679H282.094V41.355H290.417V27.5482H300.192V41.355H311.846Z" fill="white"/>
+          <path d="M262.875 88.1543C258.217 88.1543 254.379 86.7683 251.36 83.9531C248.341 81.1811 246.832 77.8028 246.832 73.7749H256.88C256.88 75.3774 257.484 76.72 258.648 77.8461C259.813 78.9723 261.279 79.5353 262.961 79.5353C264.557 79.5353 265.893 79.0589 267.058 78.1493C268.179 77.2398 268.74 76.0704 268.74 74.7277C268.74 71.9125 266.066 69.7902 260.761 68.3609C251.878 66.1087 247.436 61.4744 247.436 54.4146C247.436 50.2133 248.902 46.9216 251.878 44.4529C254.81 41.9841 258.433 40.7714 262.702 40.7714C267.144 40.7714 270.81 42.1141 273.785 44.7561C276.718 47.3981 278.184 50.6464 278.184 54.5012H268.093C268.093 51.6859 265.85 49.3904 262.616 49.3904C259.813 49.3904 257.484 51.3394 257.484 53.8082C257.484 56.6235 260.201 58.7457 265.635 60.0884C274.389 62.3406 278.788 66.9316 278.788 73.8615C278.788 78.236 277.279 81.7442 274.26 84.2996C271.198 86.855 267.403 88.1543 262.875 88.1543Z" fill="white"/>
+          <path d="M240.22 88.1543H231.405V40.7714H240.22V88.1543Z" fill="white"/>
+          <path d="M206.498 40.7714C211.991 40.7714 216.421 42.4114 219.788 45.7357C223.11 49.0601 224.793 53.4925 224.793 59.0331V88.1543H214.649V62.3574C214.649 58.7672 213.63 55.9304 211.548 53.7585C209.466 51.6309 206.631 50.5671 203.131 50.5671C199.455 50.5671 196.487 51.6752 194.272 53.8915C192.012 56.1077 190.905 58.9888 190.905 62.5347V88.1543H180.716V41.8795H190.905V48.3066C194.582 43.2979 199.809 40.7714 206.498 40.7714Z" fill="white"/>
+          <path d="M152.617 88.1543C145.521 88.1543 139.622 85.9021 134.92 81.3544C130.174 76.8067 127.824 71.1762 127.824 64.4195C127.824 57.7062 130.174 52.0757 134.92 47.528C139.622 43.0236 145.521 40.7714 152.617 40.7714C159.669 40.7714 165.568 43.0236 170.314 47.528C175.06 52.0757 177.41 57.7062 177.41 64.4195C177.41 71.1762 175.06 76.8067 170.314 81.3544C165.568 85.9021 159.669 88.1543 152.617 88.1543ZM142.416 74.5112C145.166 77.1965 148.581 78.5391 152.617 78.5391C156.653 78.5391 160.068 77.1965 162.774 74.5112C165.479 71.8258 166.854 68.4475 166.854 64.4195C166.854 60.3916 165.479 57.0566 162.774 54.3712C160.068 51.6859 156.653 50.3433 152.617 50.3433C148.581 50.3433 145.166 51.6859 142.416 54.3712C139.622 57.0566 138.247 60.3916 138.247 64.4195C138.247 68.4475 139.622 71.8258 142.416 74.5112Z" fill="white"/>
+          <path d="M109.158 88.1543C104.34 88.1543 100.369 86.7683 97.2463 83.9531C94.1234 81.1811 92.562 77.8028 92.562 73.7749H102.957C102.957 75.3774 103.581 76.72 104.786 77.8461C105.99 78.9723 107.507 79.5353 109.247 79.5353C110.898 79.5353 112.281 79.0589 113.485 78.1493C114.645 77.2398 115.225 76.0704 115.225 74.7277C115.225 71.9125 112.459 69.7902 106.972 68.3609C97.7817 66.1087 93.1866 61.4744 93.1866 54.4146C93.1866 50.2133 94.7034 46.9216 97.7817 44.4529C100.815 41.9841 104.563 40.7714 108.979 40.7714C113.574 40.7714 117.367 42.1141 120.445 44.7561C123.478 47.3981 124.995 50.6464 124.995 54.5012H114.556C114.556 51.6859 112.236 49.3904 108.89 49.3904C105.99 49.3904 103.581 51.3394 103.581 53.8082C103.581 56.6235 106.392 58.7457 112.013 60.0884C121.069 62.3406 125.62 66.9316 125.62 73.8615C125.62 78.236 124.058 81.7442 120.936 84.2996C117.768 86.855 113.842 88.1543 109.158 88.1543Z" fill="white"/>
+          <path d="M76.2351 41.5306V49.1226C79.8868 43.5849 84.5945 40.8161 90.3581 40.7714V51.3109C85.9144 51.3109 82.4387 52.606 79.9748 55.1515C77.467 57.6971 76.2351 61.1358 76.2351 65.4677V88.1543H66.1157V41.5306H76.2351Z" fill="white"/>
+          <path d="M62.8099 88.1542H50.7673L45.6637 74.7744H16.8776L11.7293 88.1542H0L24.9359 25.3443H37.874L62.8099 88.1542ZM31.2483 37.1684L20.7277 64.7728H41.8136L31.2483 37.1684Z" fill="white"/>
+          <path d="M232.212 0C256.155 17.4398 244.23 35.0732 241.032 36.3636C243.317 28.4701 239.157 22.6644 235.379 19.9703C230.878 22.8178 227.108 29.1166 229.506 36.3636C214.7 20.086 232.926 11.3674 232.212 0Z" fill="#FF4000"/>
+        </svg>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="badge badge-draft"><span class="badge-dot"></span>Draft</span><br>
+      <strong>Proposal #</strong> <span contenteditable="true">AAI-2026-XOXO</span><br>
+      <strong>Date</strong> <span id="proposal-date"></span><br>
+      <strong>Valid until</strong> <span contenteditable="true">March 28, 2026</span><br>
+      <strong>Prepared by</strong> Jon Sabutis
+    </div>
+  </header>
+
+  <!-- Title -->
+  <div class="title-block">
+    <h1 contenteditable="true">Visual Design for the<br>Interface of Intelligence</h1>
+    <p contenteditable="true">A creative partnership to bring your new design language to life — through icons, illustrations, motion graphics, and digital artwork crafted within your proprietary platform.</p>
+  </div>
+
+  <!-- Client Info -->
+  <div class="section">
+    <div class="section-label">Prepared For</div>
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <div class="field-label">Company</div>
+          <div class="field-value" contenteditable="true">xoxo.ai</div>
+        </div>
+        <div>
+          <div class="field-label">Website</div>
+          <div class="field-value"><a href="https://www.xoxo.ai" style="color:var(--accent);text-decoration:none;" target="_blank">xoxo.ai</a></div>
+        </div>
+        <div>
+          <div class="field-label">Location</div>
+          <div class="field-value" contenteditable="true">San Francisco Bay Area</div>
+        </div>
+        <div>
+          <div class="field-label">Engagement Type</div>
+          <div class="field-value" contenteditable="true">Project-Based / Ongoing Collaboration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approach -->
+  <div class="section">
+    <div class="section-label">Understanding &amp; Approach</div>
+    <div class="card">
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px;" contenteditable="true">You've built a design language with its own internal logic — a rule-based visual system for the era of intelligence. You're looking for artists who can internalize those rules and then push against them to discover what's possible.</p>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px;" contenteditable="true">That's exactly how I work. I thrive inside constraint systems — treating boundaries not as limitations but as the edges of a creative space worth exploring. My practice spans digital illustration, generative design, motion graphics, and visual systems thinking. I pick up unfamiliar tools quickly because I learn by making, not by reading manuals.</p>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;" contenteditable="true">I'm local to the Bay Area and available to begin immediately. Below is a proposed scope for an initial engagement, structured to let us establish creative rapport quickly before scaling into larger production work.</p>
+    </div>
+  </div>
+
+  <!-- Scope -->
+  <div class="section">
+    <div class="section-label">Proposed Deliverables</div>
+    <div class="scope-list">
+      <div class="scope-item">
+        <div class="scope-check checked" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
+        </div>
+        <div class="scope-text">
+          <div class="scope-title" contenteditable="true">Icons &amp; Visual Components</div>
+          <div class="scope-desc" contenteditable="true">A cohesive icon set and reusable visual components built within your design platform, following the rules and principles of your visual system.</div>
+        </div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-check checked" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
+        </div>
+        <div class="scope-text">
+          <div class="scope-title" contenteditable="true">Shapes, Patterns &amp; Graphic Elements</div>
+          <div class="scope-desc" contenteditable="true">Exploratory compositions that test the boundaries of your design language — geometric forms, tiling patterns, and textural elements that expand the system's vocabulary.</div>
+        </div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-check checked" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
+        </div>
+        <div class="scope-text">
+          <div class="scope-title" contenteditable="true">Illustrations &amp; Digital Artwork</div>
+          <div class="scope-desc" contenteditable="true">Original artwork and illustrations that express the aesthetic identity of the design language — pieces that feel native to the system while carrying a distinct creative voice.</div>
+        </div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-check checked" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
+        </div>
+        <div class="scope-text">
+          <div class="scope-title" contenteditable="true">Animations &amp; Motion Graphics</div>
+          <div class="scope-desc" contenteditable="true">Animated sequences that bring static elements to life — micro-interactions, looping compositions, and motion studies that reveal the temporal dimension of your visual system.</div>
+        </div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-check" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
+        </div>
+        <div class="scope-text">
+          <div class="scope-title" contenteditable="true">Ongoing Creative Collaboration</div>
+          <div class="scope-desc" contenteditable="true">Extended engagement for continued asset production, design system expansion, and iterative exploration as the visual language evolves. (Optional add-on)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section">
+    <div class="section-label">Timeline</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="timeline-row">
+          <div class="timeline-week" contenteditable="true">Week 1</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label" contenteditable="true">Onboarding &amp; Platform Immersion — learn the design tool, internalize the system's rules</div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-week" contenteditable="true">Week 2</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label" contenteditable="true">Initial Explorations — rapid prototyping of icons, patterns, and compositional studies</div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-week" contenteditable="true">Week 3–4</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label" contenteditable="true">Production &amp; Refinement — polished deliverables across agreed-upon asset categories</div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-week" contenteditable="true">Week 5</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label" contenteditable="true">Motion &amp; Animation — animated sequences, final review, and asset handoff</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <div class="section-label">Investment Estimate</div>
+    <div class="card">
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th style="text-align:right">Estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div contenteditable="true">Phase 1 — Onboarding &amp; Exploration</div>
+              <div class="item-desc" contenteditable="true">Platform immersion, rule-set study, initial sketches and compositional tests</div>
+            </td>
+            <td><input class="price-input" type="text" value="$4,000" data-amount="4000" oninput="recalcTotal()"></td>
+          </tr>
+          <tr>
+            <td>
+              <div contenteditable="true">Phase 2 — Static Asset Production</div>
+              <div class="item-desc" contenteditable="true">Icons, patterns, graphic elements, illustrations, and digital artwork</div>
+            </td>
+            <td><input class="price-input" type="text" value="$12,000" data-amount="12000" oninput="recalcTotal()"></td>
+          </tr>
+          <tr>
+            <td>
+              <div contenteditable="true">Phase 3 — Motion &amp; Animation</div>
+              <div class="item-desc" contenteditable="true">Animated sequences, motion studies, micro-interactions, and final delivery</div>
+            </td>
+            <td><input class="price-input" type="text" value="$9,000" data-amount="9000" oninput="recalcTotal()"></td>
+          </tr>
+          <tr class="pricing-total-row">
+            <td>Total (Initial Project)</td>
+            <td id="pricing-total">$25,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:16px;line-height:1.6;" contenteditable="true">Estimate scoped for an initial 5-week engagement. Final pricing adjustable based on deliverable volume and complexity. Ongoing collaboration billed at a negotiated project or monthly rate.</p>
+    </div>
+  </div>
+
+  <!-- Portfolio -->
+  <div class="section">
+    <div class="section-label">Portfolio</div>
+    <div class="card" style="text-align:center;padding:32px;">
+      <p style="font-size:15px;color:var(--text);margin-bottom:16px;font-weight:600;" contenteditable="true">View selected work and case studies</p>
+      <a href="https://www.arsonistai.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:15px;font-weight:600;text-decoration:none;padding:12px 28px;border:1px solid var(--accent-glow);border-radius:50px;transition:background 0.2s,border-color 0.2s;" onmouseover="this.style.background='var(--accent-dim)'" onmouseout="this.style.background='transparent'">www.arsonistai.com</a>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;line-height:1.6;" contenteditable="true">Includes work in digital illustration, graphic design, visual systems, generative art, and motion graphics.</p>
+    </div>
+  </div>
+
+  <!-- Terms -->
+  <div class="section">
+    <div class="section-label">Terms</div>
+    <div class="card">
+      <ul class="terms-list">
+        <li contenteditable="true">50% due upon signing, 50% upon delivery of final assets.</li>
+        <li contenteditable="true">All deliverables created within the xoxo.ai platform are owned by xoxo.ai upon payment.</li>
+        <li contenteditable="true">Jon Sabutis retains the right to display project work in his portfolio unless otherwise agreed.</li>
+        <li contenteditable="true">Up to two rounds of revision included per deliverable phase.</li>
+        <li contenteditable="true">Scope changes or additional asset categories require a written change order.</li>
+        <li contenteditable="true">This proposal is valid for 30 days from the date above.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Accept -->
+  <div class="section">
+    <div class="accept-section">
+      <h3>Let's build something new.</h3>
+      <p>Sign below to approve this proposal and kick off the engagement.</p>
+      <div class="sig-row">
+        <div class="sig-field">
+          <div class="field-label">Full Name</div>
+          <input class="sig-input" type="text" placeholder="Your name" id="sig-name">
+        </div>
+        <div class="sig-field">
+          <div class="field-label">Date</div>
+          <input class="sig-input" type="text" id="sig-date" readonly>
+        </div>
+      </div>
+      <button class="btn-accept" id="btn-accept" onclick="acceptProposal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
+        Accept Proposal
+      </button>
+    </div>
+  </div>
+
+  <div class="flame-mark">
+    <svg width="338" height="338" viewBox="0 0 338 338" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="169" cy="169" r="169" fill="black"/>
+      <path d="M150.85 58.0859C293.33 164.233 222.366 271.559 203.336 279.413C216.933 231.369 192.179 196.033 169.696 179.635C142.915 196.967 120.478 235.304 134.751 279.413C46.6443 180.34 155.101 127.274 150.85 58.0859Z" fill="white"/>
+    </svg>
+  </div>
+
+  <footer class="footer">
+    <span>© 2026 Arsonist AI — Jon Sabutis. San Francisco Bay Area.</span>
+    <span>Confidential</span>
+  </footer>
+</div>
+
+<script>
+  document.getElementById('proposal-date').textContent =
+    new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('sig-date').value =
+    new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  function parseAmount(str) {
+    return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
+  }
+
+  function formatCurrency(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function recalcTotal() {
+    const inputs = document.querySelectorAll('.price-input');
+    let total = 0;
+    inputs.forEach(inp => { total += parseAmount(inp.value); });
+    document.getElementById('pricing-total').textContent = formatCurrency(total);
+  }
+
+  function acceptProposal() {
+    const name = document.getElementById('sig-name').value.trim();
+    if (!name) {
+      document.getElementById('sig-name').focus();
+      document.getElementById('sig-name').style.borderColor = 'var(--red)';
+      setTimeout(() => document.getElementById('sig-name').style.borderColor = '', 1500);
+      return;
+    }
+
+    const btn = document.getElementById('btn-accept');
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg> Accepted!';
+    btn.classList.add('accepted');
+
+    document.querySelector('.badge-draft').innerHTML = '<span class="badge-dot" style="background:var(--green);"></span>Accepted';
+    document.querySelector('.badge-draft').style.background = 'rgba(34,197,94,0.12)';
+    document.querySelector('.badge-draft').style.color = 'var(--green)';
+
+    launchConfetti();
+  }
+
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#FF4000', '#ff6633', '#ff9966', '#cc3300', '#fbbf24', '#ffffff'];
+    const pieces = [];
+
+    for (let i = 0; i < 120; i++) {
+      pieces.push({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 16,
+        vy: -Math.random() * 18 - 4,
+        w: Math.random() * 8 + 4,
+        h: Math.random() * 6 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * Math.PI * 2,
+        rv: (Math.random() - 0.5) * 0.3,
+        gravity: 0.35 + Math.random() * 0.15,
+        opacity: 1
+      });
+    }
+
+    let frame = 0;
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      pieces.forEach(p => {
+        p.x += p.vx;
+        p.vy += p.gravity;
+        p.y += p.vy;
+        p.rot += p.rv;
+        if (frame > 40) p.opacity -= 0.015;
+        if (p.opacity <= 0) return;
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (alive) requestAnimationFrame(animate);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', () => {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
