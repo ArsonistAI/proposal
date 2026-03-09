@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <meta property="og:image" content="https://arsonistai.github.io/proposal/favicon.png">
-<meta property="og:title" content="Arsonist AI — Proposal">
+<meta property="og:title" content="Arsonist AI — Proposals">
 <meta property="og:url" content="https://arsonistai.github.io/proposal/">
 <meta name="twitter:image" content="https://arsonistai.github.io/proposal/favicon.png">
-<meta name="twitter:title" content="Arsonist AI — Proposal">
-<title>Arsonist AI — Proposal</title>
+<meta name="twitter:title" content="Arsonist AI — Proposals">
+<title>Arsonist AI — Proposals</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -26,11 +26,7 @@
     --text-muted: #8b8b96;
     --accent: #FF4000;
     --accent-dim: rgba(255, 64, 0, 0.12);
-    --accent-glow: rgba(255, 64, 0, 0.25);
-    --red: #ef4444;
-    --green: #22c55e;
     --radius: 10px;
-    --radius-sm: 6px;
   }
 
   html { scroll-behavior: smooth; }
@@ -44,13 +40,8 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 32px 80px;
-  }
+  .page { max-width: 860px; margin: 0 auto; padding: 48px 32px 80px; }
 
-  /* ── Header ── */
   .header {
     display: flex;
     justify-content: space-between;
@@ -60,438 +51,43 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .brand { display: flex; align-items: center; }
-
   .brand-wordmark { height: 30px; }
   .brand-wordmark svg { height: 30px; width: auto; }
 
-  .flame-mark {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 48px;
-  }
-
-  .flame-mark svg { width: 56px; height: 56px; }
-
-  .header-meta {
-    text-align: right;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.8;
-  }
-
-  .header-meta strong { color: var(--text); font-weight: 600; }
+  .header-meta { text-align: right; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
   .header-meta a { color: var(--accent); text-decoration: none; }
   .header-meta a:hover { text-decoration: underline; }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+  .title-block { margin-bottom: 40px; }
+  .title-block h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .title-block p { font-size: 15px; color: var(--text-muted); }
 
-  .badge-draft { background: var(--accent-dim); color: var(--accent); }
-
-  .badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* ── Title area ── */
-  .title-block { margin-bottom: 48px; }
-
-  .title-block h1 {
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-
-  .title-block p {
-    font-size: 16px;
-    color: var(--text-muted);
-    max-width: 560px;
-  }
-
-  /* ── Editable fields ── */
-  [contenteditable] {
-    outline: none;
-    border-radius: var(--radius-sm);
-    transition: box-shadow 0.2s, background 0.2s;
-    padding: 1px 4px;
-    margin: -1px -4px;
-  }
-
-  [contenteditable]:hover {
-    background: var(--accent-dim);
-  }
-
-  [contenteditable]:focus {
-    background: var(--accent-dim);
-    box-shadow: 0 0 0 2px var(--accent-glow);
-  }
-
-  [contenteditable].placeholder-active { color: var(--text-muted); font-style: italic; }
-
-  /* ── Sections ── */
-  .section {
-    margin-bottom: 40px;
-    animation: fade-up 0.5s ease both;
-  }
-
-  .section:nth-child(2) { animation-delay: 0.05s; }
-  .section:nth-child(3) { animation-delay: 0.1s; }
-  .section:nth-child(4) { animation-delay: 0.15s; }
-  .section:nth-child(5) { animation-delay: 0.2s; }
-
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* ── Card ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px;
-    transition: border-color 0.2s;
+    padding: 24px 28px;
   }
 
-  .card:hover { border-color: var(--border-hover); }
-
-  /* ── Two-column grid ── */
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .field-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .field-value {
-    font-size: 15px;
-    font-weight: 500;
-    min-height: 24px;
-  }
-
-  /* ── Scope items ── */
-  .scope-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .scope-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s, transform 0.15s;
-    cursor: default;
-  }
-
-  .scope-item:hover {
-    border-color: var(--border-hover);
-    transform: translateX(2px);
-  }
-
-  .scope-check {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    margin-top: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .scope-check.checked {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-
-  .scope-check svg {
-    width: 12px;
-    height: 12px;
-    fill: none;
-    stroke: white;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: all 0.2s;
-  }
-
-  .scope-check.checked svg { opacity: 1; transform: scale(1); }
-
-  .scope-text { flex: 1; }
-  .scope-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-  .scope-desc { font-size: 13px; color: var(--text-muted); }
-
-  /* ── Timeline ── */
-  .timeline { display: flex; flex-direction: column; gap: 0; }
-
-  .timeline-row {
-    display: grid;
-    grid-template-columns: 100px 24px 1fr;
-    gap: 0 16px;
-    padding: 14px 0;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .timeline-row:last-child { border-bottom: none; }
-
-  .timeline-week {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-  }
-
-  .timeline-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--surface-2);
-    border: 2px solid var(--accent);
-    justify-self: center;
-    position: relative;
-  }
-
-  .timeline-row:not(:last-child) .timeline-dot::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 22px;
-    background: var(--border);
-  }
-
-  .timeline-label { font-size: 14px; font-weight: 500; }
-
-  /* ── Pricing ── */
-  .pricing-table { width: 100%; border-collapse: collapse; }
-
-  .pricing-table th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    padding: 0 0 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .pricing-table th:last-child { text-align: right; }
-
-  .pricing-table td {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-
-  .pricing-table td:last-child {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    font-size: 14px;
-  }
-
-  .pricing-table .item-desc { color: var(--text-muted); font-size: 13px; }
-
-  .pricing-total-row td {
-    border-bottom: none;
-    padding-top: 18px;
-    font-weight: 700;
-    font-size: 16px;
-  }
-
-  .pricing-total-row td:last-child {
-    color: var(--accent);
-    font-size: 20px;
-  }
-
-  .price-input {
-    background: none;
-    border: none;
+  .proposal-list { list-style: none; }
+  .proposal-list li { border-bottom: 1px solid var(--border); }
+  .proposal-list li:last-child { border-bottom: none; }
+  .proposal-list a {
+    display: block;
+    padding: 18px 0;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    text-decoration: none;
     font-weight: 500;
-    font-size: 14px;
-    text-align: right;
-    width: 100%;
-    outline: none;
-    padding: 2px 4px;
-    border-radius: var(--radius-sm);
-    transition: background 0.2s, box-shadow 0.2s;
+    transition: color 0.15s, border-color 0.15s;
   }
+  .proposal-list a:hover { color: var(--accent); }
+  .proposal-list .desc { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-top: 4px; }
 
-  .price-input:hover { background: var(--accent-dim); }
-  .price-input:focus { background: var(--accent-dim); box-shadow: 0 0 0 2px var(--accent-glow); }
+  .flame-mark { display: flex; justify-content: center; margin: 48px 0; }
+  .flame-mark svg { width: 56px; height: 56px; }
 
-  /* ── Terms ── */
-  .terms-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .terms-list li {
-    display: flex;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .terms-list li::before {
-    content: '→';
-    color: var(--accent);
-    flex-shrink: 0;
-    font-weight: 600;
-  }
-
-  /* ── Accept ── */
-  .accept-section {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.06), rgba(239, 68, 68, 0.04));
-    border: 1px solid var(--accent-glow);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-  }
-
-  .accept-section h3 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .accept-section p {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-  }
-
-  .sig-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 28px;
-    text-align: left;
-  }
-
-  .sig-field { display: flex; flex-direction: column; gap: 6px; }
-
-  .sig-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .sig-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-dim);
-  }
-
-  .sig-input::placeholder { color: var(--text-muted); }
-
-  .btn-accept {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 40px;
-    background: linear-gradient(135deg, var(--accent), #cc3300);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
-    box-shadow: 0 4px 24px rgba(255, 64, 0, 0.3);
-  }
-
-  .btn-accept:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 32px rgba(255, 64, 0, 0.4);
-  }
-
-  .btn-accept:active { transform: translateY(0); }
-
-  .btn-accept.accepted {
-    background: linear-gradient(135deg, var(--green), #16a34a);
-    box-shadow: 0 4px 24px rgba(34, 197, 94, 0.3);
-    pointer-events: none;
-  }
-
-  /* ── Confetti canvas ── */
-  #confetti-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 999;
-  }
-
-  /* ── Footer ── */
   .footer {
-    margin-top: 56px;
+    margin-top: 32px;
     padding-top: 24px;
     border-top: 1px solid var(--border);
     display: flex;
@@ -502,31 +98,18 @@
   .footer a { color: var(--text-muted); text-decoration: none; }
   .footer a:hover { color: var(--accent); text-decoration: underline; }
 
-  /* ── Print ── */
-  @media print {
-    body { background: white; color: #111; }
-    .card { border-color: #ddd; }
-    .btn-accept { display: none; }
-    .scope-check { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  }
-
   @media (max-width: 640px) {
     .page { padding: 24px 16px 60px; }
     .header { flex-direction: column; gap: 16px; }
     .header-meta { text-align: left; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .sig-row { grid-template-columns: 1fr; }
-    .title-block h1 { font-size: 26px; }
+    .title-block h1 { font-size: 24px; }
   }
 </style>
 </head>
 <body>
 
-<canvas id="confetti-canvas"></canvas>
+<div class="page">
 
-<div class="page" data-proposal-id="default">
-
-  <!-- Header -->
   <header class="header">
     <div class="brand">
       <div class="brand-wordmark">
@@ -546,227 +129,37 @@
       </div>
     </div>
     <div class="header-meta">
-      <span class="badge badge-draft"><span class="badge-dot"></span>Draft</span><br>
-      <strong>Proposal #</strong> <span contenteditable="true">AAI-2026-XOXO</span><br>
-      <strong>Date</strong> <span id="proposal-date"></span><br>
-      <strong>Valid until</strong> <span contenteditable="true">March 28, 2026</span><br>
       <strong>Prepared by</strong> Jon Sabutis<br>
       <a href="https://dribbble.com/jsabutis" target="_blank" rel="noopener noreferrer">Portfolio →</a>
     </div>
   </header>
 
-  <!-- Title -->
   <div class="title-block">
-    <h1 contenteditable="true">Visual Design for the<br>Interface of Intelligence</h1>
-    <p contenteditable="true">A creative partnership to bring your new design language to life — through icons, illustrations, motion graphics, and digital artwork crafted within your proprietary platform.</p>
+    <h1>Proposals</h1>
+    <p>Select a proposal to view and accept.</p>
   </div>
 
-  <!-- Client Info -->
-  <div class="section">
-    <div class="section-label">Prepared For</div>
-    <div class="card">
-      <div class="grid-2">
-        <div>
-          <div class="field-label">Company</div>
-          <div class="field-value" contenteditable="true">xoxo.ai</div>
-        </div>
-        <div>
-          <div class="field-label">Website</div>
-          <div class="field-value"><a href="https://www.xoxo.ai" style="color:var(--accent);text-decoration:none;" target="_blank">xoxo.ai</a></div>
-        </div>
-        <div>
-          <div class="field-label">Location</div>
-          <div class="field-value" contenteditable="true">San Francisco Bay Area</div>
-        </div>
-        <div>
-          <div class="field-label">Engagement Type</div>
-          <div class="field-value" contenteditable="true">Project-Based / Ongoing Collaboration</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Approach -->
-  <div class="section">
-    <div class="section-label">Understanding &amp; Approach</div>
-    <div class="card">
-      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px;" contenteditable="true">You've built a design language with its own internal logic — a rule-based visual system for the era of intelligence. You're looking for artists who can internalize those rules and then push against them to discover what's possible.</p>
-      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px;" contenteditable="true">That's exactly how I work. I thrive inside constraint systems — treating boundaries not as limitations but as the edges of a creative space worth exploring. My practice spans digital illustration, generative design, motion graphics, and visual systems thinking. I pick up unfamiliar tools quickly because I learn by making, not by reading manuals.</p>
-      <p style="font-size:14px;color:var(--text-muted);line-height:1.7;" contenteditable="true">I'm local to the Bay Area and available to begin immediately. Below is a proposed scope for an initial engagement, structured to let us establish creative rapport quickly before scaling into larger production work.</p>
-    </div>
-  </div>
-
-  <!-- Scope -->
-  <div class="section">
-    <div class="section-label">Proposed Deliverables</div>
-    <div class="scope-list">
-      <div class="scope-item">
-        <div class="scope-check checked" onclick="toggleCheck(this)">
-          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
-        </div>
-        <div class="scope-text">
-          <div class="scope-title" contenteditable="true">Icons &amp; Visual Components</div>
-          <div class="scope-desc" contenteditable="true">A cohesive icon set and reusable visual components built within your design platform, following the rules and principles of your visual system.</div>
-        </div>
-      </div>
-      <div class="scope-item">
-        <div class="scope-check checked" onclick="toggleCheck(this)">
-          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
-        </div>
-        <div class="scope-text">
-          <div class="scope-title" contenteditable="true">Shapes, Patterns &amp; Graphic Elements</div>
-          <div class="scope-desc" contenteditable="true">Exploratory compositions that test the boundaries of your design language — geometric forms, tiling patterns, and textural elements that expand the system's vocabulary.</div>
-        </div>
-      </div>
-      <div class="scope-item">
-        <div class="scope-check checked" onclick="toggleCheck(this)">
-          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
-        </div>
-        <div class="scope-text">
-          <div class="scope-title" contenteditable="true">Illustrations &amp; Digital Artwork</div>
-          <div class="scope-desc" contenteditable="true">Original artwork and illustrations that express the aesthetic identity of the design language — pieces that feel native to the system while carrying a distinct creative voice.</div>
-        </div>
-      </div>
-      <div class="scope-item">
-        <div class="scope-check checked" onclick="toggleCheck(this)">
-          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
-        </div>
-        <div class="scope-text">
-          <div class="scope-title" contenteditable="true">Animations &amp; Motion Graphics</div>
-          <div class="scope-desc" contenteditable="true">Animated sequences that bring static elements to life — micro-interactions, looping compositions, and motion studies that reveal the temporal dimension of your visual system.</div>
-        </div>
-      </div>
-      <div class="scope-item">
-        <div class="scope-check" onclick="toggleCheck(this)">
-          <svg viewBox="0 0 16 16"><polyline points="3.5 8.5 6.5 11.5 12.5 5.5"/></svg>
-        </div>
-        <div class="scope-text">
-          <div class="scope-title" contenteditable="true">Ongoing Creative Collaboration</div>
-          <div class="scope-desc" contenteditable="true">Extended engagement for continued asset production, design system expansion, and iterative exploration as the visual language evolves. (Optional add-on)</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Timeline -->
-  <div class="section">
-    <div class="section-label">Timeline</div>
-    <div class="card">
-      <div class="timeline">
-        <div class="timeline-row">
-          <div class="timeline-week" contenteditable="true">Week 1</div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-label" contenteditable="true">Onboarding &amp; Platform Immersion — learn the design tool, internalize the system's rules</div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-week" contenteditable="true">Week 2</div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-label" contenteditable="true">Initial Explorations — rapid prototyping of icons, patterns, and compositional studies</div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-week" contenteditable="true">Week 3–4</div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-label" contenteditable="true">Production &amp; Refinement — polished deliverables across agreed-upon asset categories</div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-week" contenteditable="true">Week 5</div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-label" contenteditable="true">Motion &amp; Animation — animated sequences, final review, and asset handoff</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Packages -->
-  <div class="section">
-    <div class="section-label">Packages</div>
-    <div class="card">
-      <table class="pricing-table">
-        <thead>
-          <tr>
-            <th>Package</th>
-            <th style="text-align:right">Investment</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div contenteditable="true">Basic Package</div>
-              <div class="item-desc" contenteditable="true">Icons and visual components · Shapes, patterns, and graphic elements · Images and illustrations</div>
-            </td>
-            <td><input class="price-input" type="text" value="$10,000" data-amount="10000" oninput="recalcTotal()"></td>
-          </tr>
-          <tr>
-            <td>
-              <div contenteditable="true">Premium Package</div>
-              <div class="item-desc" contenteditable="true">Animations and motion graphics</div>
-            </td>
-            <td><input class="price-input" type="text" value="$20,000+" data-amount="20000" oninput="recalcTotal()"></td>
-          </tr>
-          <tr class="pricing-total-row">
-            <td>Total</td>
-            <td id="pricing-total">$30,000</td>
-          </tr>
-        </tbody>
-      </table>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:16px;line-height:1.6;" contenteditable="true">Premium Package is $20,000 and up based on scope. Final pricing adjustable based on deliverable volume and complexity. Ongoing collaboration billed at a negotiated project or monthly rate.</p>
-    </div>
-  </div>
-
-  <!-- Portfolio -->
-  <div class="section">
-    <div class="section-label">Portfolio</div>
-    <div class="card" style="text-align:center;padding:32px;">
-      <p style="font-size:15px;color:var(--text);margin-bottom:16px;font-weight:600;" contenteditable="true">View selected work and case studies</p>
-      <a href="https://www.arsonistai.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:15px;font-weight:600;text-decoration:none;padding:12px 28px;border:1px solid var(--accent-glow);border-radius:50px;transition:background 0.2s,border-color 0.2s;" onmouseover="this.style.background='var(--accent-dim)'" onmouseout="this.style.background='transparent'">www.arsonistai.com</a>
-      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;line-height:1.6;" contenteditable="true">Includes work in digital illustration, graphic design, visual systems, generative art, and motion graphics.</p>
-    </div>
-  </div>
-
-  <!-- Terms -->
-  <div class="section">
-    <div class="section-label">Terms</div>
-    <div class="card">
-      <ul class="terms-list">
-        <li contenteditable="true">50% due upon signing, 50% upon delivery of final assets.</li>
-        <li contenteditable="true">All deliverables created within the xoxo.ai platform are owned by xoxo.ai upon payment.</li>
-        <li contenteditable="true">Jon Sabutis retains the right to display project work in his portfolio unless otherwise agreed.</li>
-        <li contenteditable="true">Up to two rounds of revision included per deliverable package.</li>
-        <li contenteditable="true">Scope changes or additional asset categories require a written change order.</li>
-        <li contenteditable="true">This proposal is valid for 30 days from the date above.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Accept -->
-  <div class="section">
-    <div class="accept-section">
-      <h3>Let's build something new.</h3>
-      <p>Sign below to approve this proposal and kick off the engagement. You will sign via DocuSign; both parties will receive a copy.</p>
-      <div class="sig-row">
-        <div class="sig-field">
-          <div class="field-label">Full Name</div>
-          <input class="sig-input" type="text" placeholder="Your name" id="sig-name">
-        </div>
-        <div class="sig-field">
-          <div class="field-label">Email</div>
-          <input class="sig-input" type="email" placeholder="your@email.com" id="sig-email">
-        </div>
-        <div class="sig-field">
-          <div class="field-label">Date</div>
-          <input class="sig-input" type="text" id="sig-date" readonly>
-        </div>
-      </div>
-      <div class="signatures-block" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-muted);">
-        <p style="margin-bottom:8px;">Signatures (signed via DocuSign):</p>
-        <p>Client: ________________</p>
-        <p>Arsonist AI: ________________</p>
-      </div>
-      <button class="btn-accept" id="btn-accept" onclick="acceptProposal()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
-        Accept Proposal
-      </button>
-    </div>
+  <div class="card">
+    <ul class="proposal-list">
+      <li>
+        <a href="3koncept/">
+          <strong>Modern Playful Site for 3Koncept</strong>
+          <span class="desc">Female-led creative consultancy — playful modern website, animation, watercolor, backend for blog. DocuSign enabled.</span>
+        </a>
+      </li>
+      <li>
+        <a href="berkeley-nonprofit/">
+          <strong>Web Designer &amp; Blog Maker for Berkeley Nonprofit</strong>
+          <span class="desc">Web design and blog for a Berkeley-based nonprofit (policy and technology for water shortages).</span>
+        </a>
+      </li>
+      <li>
+        <a href="arsonist-ai-proposal-xoxo.html">
+          <strong>Visual Design for the Interface of Intelligence</strong>
+          <span class="desc">xoxo.ai — Icons, illustrations, motion graphics, and digital artwork within your design platform.</span>
+        </a>
+      </li>
+    </ul>
   </div>
 
   <div class="flame-mark">
@@ -781,139 +174,6 @@
     <span>Confidential</span>
   </footer>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-  var PROPOSAL_ENVELOPE_API = '';
-</script>
-<script>
-  document.getElementById('proposal-date').textContent =
-    new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('sig-date').value =
-    new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  function toggleCheck(el) {
-    el.classList.toggle('checked');
-  }
-
-  function parseAmount(str) {
-    return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
-  }
-
-  function formatCurrency(n) {
-    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  }
-
-  function recalcTotal() {
-    const inputs = document.querySelectorAll('.price-input');
-    let total = 0;
-    inputs.forEach(inp => { total += parseAmount(inp.value); });
-    document.getElementById('pricing-total').textContent = formatCurrency(total);
-  }
-
-  function setAcceptedUI() {
-    var btn = document.getElementById('btn-accept');
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg> Accepted!';
-    btn.classList.add('accepted');
-    document.querySelector('.badge-draft').innerHTML = '<span class="badge-dot" style="background:var(--green);"></span>Accepted';
-    document.querySelector('.badge-draft').style.background = 'rgba(34,197,94,0.12)';
-    document.querySelector('.badge-draft').style.color = 'var(--green)';
-    launchConfetti();
-  }
-  function setButtonLoading(loading) {
-    var btn = document.getElementById('btn-accept');
-    btn.disabled = !!loading;
-    btn.innerHTML = loading ? 'Preparing document…' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg> Accept Proposal';
-  }
-  function acceptProposal() {
-    var name = document.getElementById('sig-name').value.trim();
-    var emailEl = document.getElementById('sig-email');
-    var email = emailEl ? emailEl.value.trim() : '';
-    if (!name) {
-      document.getElementById('sig-name').focus();
-      document.getElementById('sig-name').style.borderColor = 'var(--red)';
-      setTimeout(function() { document.getElementById('sig-name').style.borderColor = ''; }, 1500);
-      return;
-    }
-    if (!email) {
-      if (emailEl) { emailEl.focus(); emailEl.style.borderColor = 'var(--red)'; setTimeout(function() { emailEl.style.borderColor = ''; }, 1500); }
-      return;
-    }
-    var apiBase = (typeof PROPOSAL_ENVELOPE_API !== 'undefined' && PROPOSAL_ENVELOPE_API) ? PROPOSAL_ENVELOPE_API.replace(/\/$/, '') : '';
-    var proposalId = document.querySelector('.page') && document.querySelector('.page').getAttribute('data-proposal-id') || 'proposal';
-    if (!apiBase) { setAcceptedUI(); return; }
-    setButtonLoading(true);
-    var pageEl = document.querySelector('.page');
-    var opt = { margin: 12, filename: 'proposal.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-    html2pdf().set(opt).from(pageEl).outputPdf('datauristring').then(function(dataUrl) {
-      var base64 = dataUrl.split(',')[1] || '';
-      return fetch(apiBase + '/api/send-proposal-envelope', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pdfBase64: base64, clientName: name, clientEmail: email, proposalId: proposalId }) });
-    }).then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); }).then(function(result) {
-      setButtonLoading(false);
-      if (result.ok && result.data.signingUrl) { window.location.href = result.data.signingUrl; }
-      else if (result.data && result.data.fallback) { setAcceptedUI(); }
-      else { alert(result.data && result.data.error ? result.data.error : 'Could not start signing. Please try again.'); }
-    }).catch(function() { setButtonLoading(false); setAcceptedUI(); });
-  }
-
-  function launchConfetti() {
-    const canvas = document.getElementById('confetti-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const colors = ['#FF4000', '#ff6633', '#ff9966', '#cc3300', '#fbbf24', '#ffffff'];
-    const pieces = [];
-
-    for (let i = 0; i < 120; i++) {
-      pieces.push({
-        x: canvas.width / 2 + (Math.random() - 0.5) * 200,
-        y: canvas.height / 2,
-        vx: (Math.random() - 0.5) * 16,
-        vy: -Math.random() * 18 - 4,
-        w: Math.random() * 8 + 4,
-        h: Math.random() * 6 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rot: Math.random() * Math.PI * 2,
-        rv: (Math.random() - 0.5) * 0.3,
-        gravity: 0.35 + Math.random() * 0.15,
-        opacity: 1
-      });
-    }
-
-    let frame = 0;
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let alive = false;
-      pieces.forEach(p => {
-        p.x += p.vx;
-        p.vy += p.gravity;
-        p.y += p.vy;
-        p.rot += p.rv;
-        if (frame > 40) p.opacity -= 0.015;
-        if (p.opacity <= 0) return;
-        alive = true;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.globalAlpha = Math.max(0, p.opacity);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      });
-      frame++;
-      if (alive) requestAnimationFrame(animate);
-      else ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    requestAnimationFrame(animate);
-  }
-
-  window.addEventListener('resize', () => {
-    const canvas = document.getElementById('confetti-canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-</script>
 
 </body>
 </html>
