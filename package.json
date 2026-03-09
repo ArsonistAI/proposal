@@ -1,0 +1,9 @@
+{
+  "name": "proposal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proposal pages and DocuSign envelope API",
+  "dependencies": {
+    "docusign-esign": "^6.5.1"
+  }
+}
