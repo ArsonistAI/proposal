@@ -806,7 +806,7 @@
     if (!apiBase) { setAcceptedUI(); return; }
     setButtonLoading(true);
     var pageEl = document.querySelector('.page');
-    var opt = { margin: 12, filename: 'proposal.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+    var opt = { margin: 12, filename: 'proposal.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: 'css', before: '.section', avoid: ['.scope-item', '.timeline-row'] } };
     html2pdf().set(opt).from(pageEl).outputPdf('datauristring').then(function(dataUrl) {
       var base64 = dataUrl.split(',')[1] || '';
       return fetch(apiBase + '/api/send-proposal-envelope', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pdfBase64: base64, clientName: name, clientEmail: email, proposalId: proposalId }) });
