@@ -207,9 +207,13 @@ module.exports = async function handler(req, res) {
 
     return jsonResponse(res, 200, { signingUrl: signingUrl });
   } catch (err) {
+    const message = err && err.message ? err.message : String(err);
+    const body = err && err.response && err.response.body;
+    console.error('DocuSign error:', message, body ? JSON.stringify(body) : '');
     const fallback = !integrationKey;
     return jsonResponse(res, 502, {
       error: 'Could not create signing session',
+      detail: body && body.message ? body.message : message,
       fallback: fallback,
     });
   }

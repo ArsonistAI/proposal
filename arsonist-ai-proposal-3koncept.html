@@ -836,7 +836,7 @@
         if (result.data && result.data.fallback) {
           setAcceptedUI();
         } else {
-          alert(result.data && result.data.error ? result.data.error : 'Could not start signing. Please try again.');
+          alert((result.data && result.data.error ? result.data.error : 'Could not start signing.') + (result.data && result.data.detail ? '\n\n' + result.data.detail : ''));
         }
       }
     }).catch(function(err) {
