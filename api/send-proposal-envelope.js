@@ -122,29 +122,35 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  var debugInfo = {};
   try {
     const token = await getToken();
     if (!token || !token.body || !token.body.access_token) {
       throw new Error('JWT token request failed - no access_token');
     }
+    debugInfo.jwtOk = true;
 
     // Use getUserInfo to resolve the correct base_uri for this account
     const oauthClient = new docusign.ApiClient();
     oauthClient.setOAuthBasePath(authServer);
     const userInfo = await oauthClient.getUserInfo(token.body.access_token);
     const accounts = (userInfo && userInfo.accounts) || [];
+    debugInfo.accounts = accounts.map(function (a) { return { id: a.accountId, def: a.isDefault, uri: a.baseUri }; });
+    debugInfo.envAccountId = accountId;
+
     const acc = accounts.find(function (a) {
       return a.accountId === accountId;
     }) || accounts.find(function (a) {
       return a.isDefault === 'true' || a.isDefault === true;
     }) || accounts[0];
 
-    console.log('getUserInfo accounts:', JSON.stringify(accounts.map(function (a) { return { accountId: a.accountId, isDefault: a.isDefault, baseUri: a.baseUri }; })));
-    console.log('env DOCUSIGN_ACCOUNT_ID:', accountId);
-    if (!acc) throw new Error('No matching DocuSign account found. env accountId: ' + accountId + ' | accounts: ' + JSON.stringify(accounts));
+    if (!acc) throw new Error('No matching DocuSign account. env: ' + accountId + ' | available: ' + JSON.stringify(debugInfo.accounts));
     const resolvedAccountId = acc.accountId;
     const basePath = acc.baseUri + '/restapi/v2.1';
-    console.log('DocuSign basePath:', basePath, '| resolvedAccountId:', resolvedAccountId, '| matched env:', resolvedAccountId === accountId);
+    debugInfo.resolvedAccountId = resolvedAccountId;
+    debugInfo.basePath = basePath;
+    debugInfo.matched = resolvedAccountId === accountId;
+    console.log('Debug:', JSON.stringify(debugInfo));
 
     const apiClient = new docusign.ApiClient();
     apiClient.addDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
@@ -263,6 +269,7 @@ module.exports = async function handler(req, res) {
       hint: isJwt ? 'Check DOCUSIGN_PRIVATE_KEY format, DOCUSIGN_INTEGRATION_KEY, DOCUSIGN_USER_ID, and DOCUSIGN_AUTH_SERVER in Vercel env vars' : undefined,
       docusignStatus: httpStatus,
       docusignBody: dsBody || undefined,
+      debug: debugInfo,
     });
   }
 };
