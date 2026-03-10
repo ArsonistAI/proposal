@@ -129,7 +129,7 @@ module.exports = async function handler(req, res) {
     }
 
     const apiClient = new docusign.ApiClient();
-    apiClient.setDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
+    apiClient.addDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
 
     // Resolve base path from token accounts; fallback based on authServer
     let basePath;
