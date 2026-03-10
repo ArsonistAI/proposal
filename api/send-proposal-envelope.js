@@ -146,7 +146,7 @@ module.exports = async function handler(req, res) {
 
     if (!acc) throw new Error('No matching DocuSign account. env: ' + accountId + ' | available: ' + JSON.stringify(debugInfo.accounts));
     const resolvedAccountId = acc.accountId;
-    const basePath = acc.baseUri + '/restapi/v2.1';
+    const basePath = acc.baseUri + '/restapi';
     debugInfo.resolvedAccountId = resolvedAccountId;
     debugInfo.basePath = basePath;
     debugInfo.matched = resolvedAccountId === accountId;
