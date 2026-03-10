@@ -3,17 +3,17 @@ const docusign = require('docusign-esign');
 const MAX_PDF_BYTES = 5 * 1024 * 1024; // 5MB
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function corsHeaders(origin) {
+function corsHeaders() {
   return {
-    'Access-Control-Allow-Origin': origin || '*',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
 }
 
-function jsonResponse(res, status, data, headers) {
-  res.writeHead(status, Object.assign({}, corsHeaders(), headers || {}));
+function jsonResponse(res, status, data) {
+  res.writeHead(status, corsHeaders());
   res.end(JSON.stringify(data));
 }
 
@@ -75,18 +75,16 @@ module.exports = async function handler(req, res) {
   const privateKey = process.env.DOCUSIGN_PRIVATE_KEY;
   const senderEmail = process.env.DOCUSIGN_SENDER_EMAIL;
   const senderName = process.env.DOCUSIGN_SENDER_NAME || 'Arsonist AI';
+  const authServer = process.env.DOCUSIGN_AUTH_SERVER || 'account-d.docusign.com';
 
   if (!integrationKey || !userId || !accountId || !privateKey || !senderEmail) {
-    return jsonResponse(res, 503, {
-      error: 'DocuSign not configured',
-      fallback: true,
-    });
+    return jsonResponse(res, 503, { error: 'DocuSign not configured', fallback: true });
   }
 
   function getToken() {
     return new Promise(function (resolve, reject) {
       const apiClient = new docusign.ApiClient();
-      apiClient.setOAuthBasePath(process.env.DOCUSIGN_AUTH_SERVER || 'account-d.docusign.com');
+      apiClient.setOAuthBasePath(authServer);
       const keyBuf = Buffer.from(privateKey.replace(/\\n/g, '\n'), 'utf8');
       apiClient.requestJWTUserToken(
         integrationKey,
@@ -105,21 +103,26 @@ module.exports = async function handler(req, res) {
   try {
     const token = await getToken();
     if (!token || !token.body || !token.body.access_token) {
-      throw new Error('JWT token request failed');
+      throw new Error('JWT token request failed - no access_token');
     }
 
     const apiClient = new docusign.ApiClient();
     apiClient.setDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
 
-    let basePath = 'https://demo.docusign.net/restapi/v2.1';
-    if (token.body.accounts && token.body.accounts.length) {
-      const acc = token.body.accounts.find(function (a) {
-        return a.account_id === accountId;
-      });
-      if (acc && acc.base_uri) {
-        basePath = acc.base_uri + '/restapi/v2.1';
-      }
+    // Resolve base path from token accounts; fallback based on authServer
+    let basePath;
+    const accounts = (token.body && token.body.accounts) || [];
+    const acc = accounts.find(function (a) {
+      return a.account_id === accountId || a.account_guid === accountId;
+    });
+    if (acc && acc.base_uri) {
+      basePath = acc.base_uri + '/restapi/v2.1';
+    } else if (authServer.includes('account-d.')) {
+      basePath = 'https://demo.docusign.net/restapi/v2.1';
+    } else {
+      basePath = 'https://na4.docusign.net/restapi/v2.1';
     }
+    console.log('DocuSign basePath:', basePath, '| accounts in token:', accounts.length, '| matched:', !!acc);
     apiClient.setBasePath(basePath);
 
     const envelopesApi = new docusign.EnvelopesApi(apiClient);
@@ -131,20 +134,21 @@ module.exports = async function handler(req, res) {
       documentId: '1',
     });
 
+    // clientUserId must be set here AND in createRecipientView for embedded signing
     const clientSigner = new docusign.Signer.constructFromObject({
       email: emailTrimmed,
       name: nameTrimmed,
       recipientId: '1',
       routingOrder: '1',
+      clientUserId: '1',
       tabs: new docusign.Tabs.constructFromObject({
         signHereTabs: [
           new docusign.SignHere.constructFromObject({
             anchorString: 'Client:',
+            anchorIgnoreIfNotPresent: 'true',
             anchorUnits: 'pixels',
             anchorYOffset: '5',
             anchorXOffset: '10',
-            documentId: '1',
-            pageNumber: '1',
           }),
         ],
       }),
@@ -159,24 +163,25 @@ module.exports = async function handler(req, res) {
         signHereTabs: [
           new docusign.SignHere.constructFromObject({
             anchorString: 'Arsonist AI:',
+            anchorIgnoreIfNotPresent: 'true',
             anchorUnits: 'pixels',
             anchorYOffset: '5',
             anchorXOffset: '10',
-            documentId: '1',
-            pageNumber: '1',
           }),
         ],
       }),
     });
 
     const envelopeDefinition = new docusign.EnvelopeDefinition.constructFromObject({
-      emailSubject: 'Proposal: ' + proposalId + ' – Please sign',
+      emailSubject: 'Proposal ' + proposalId + ' - Please sign',
       documents: [doc],
       recipients: new docusign.Recipients.constructFromObject({
         signers: [clientSigner, senderSigner],
       }),
       status: 'sent',
     });
+
+    console.log('Creating envelope for:', emailTrimmed, '| proposalId:', proposalId, '| pdfBytes:', pdfBuffer.length);
 
     const createResult = await envelopesApi.createEnvelope(accountId, {
       envelopeDefinition: envelopeDefinition,
@@ -186,6 +191,8 @@ module.exports = async function handler(req, res) {
     if (!envelopeId) {
       throw new Error('No envelopeId in create response');
     }
+
+    console.log('Envelope created:', envelopeId);
 
     const origin = (req.headers && req.headers.origin) || 'https://arsonistai.github.io';
     const viewRequest = new docusign.RecipientViewRequest.constructFromObject({
@@ -208,13 +215,26 @@ module.exports = async function handler(req, res) {
     return jsonResponse(res, 200, { signingUrl: signingUrl });
   } catch (err) {
     const message = err && err.message ? err.message : String(err);
-    const body = err && err.response && err.response.body;
-    console.error('DocuSign error:', message, body ? JSON.stringify(body) : '');
-    const fallback = !integrationKey;
+    const errResp = err && err.response ? err.response : null;
+    const httpStatus = errResp && errResp.status;
+    let dsBody = (errResp && errResp.body) || (errResp && errResp.data);
+    if (typeof dsBody === 'string') {
+      try { dsBody = dsBody.length ? JSON.parse(dsBody) : null; } catch (_) { dsBody = { raw: dsBody }; }
+    }
+    // Log everything so it appears in Vercel function logs
+    console.error('DocuSign error | message:', message, '| http status:', httpStatus, '| body:', JSON.stringify(dsBody));
+
+    let detail = message;
+    if (dsBody && typeof dsBody === 'object') {
+      if (dsBody.message) detail = dsBody.message;
+      if (dsBody.errorCode) detail += ' [' + dsBody.errorCode + ']';
+    }
+
     return jsonResponse(res, 502, {
       error: 'Could not create signing session',
-      detail: body && body.message ? body.message : message,
-      fallback: fallback,
+      detail: detail,
+      docusignStatus: httpStatus,
+      docusignBody: dsBody || undefined,
     });
   }
 };
