@@ -139,9 +139,12 @@ module.exports = async function handler(req, res) {
       return a.isDefault === 'true' || a.isDefault === true;
     }) || accounts[0];
 
-    if (!acc) throw new Error('No matching DocuSign account found for accountId: ' + accountId);
+    console.log('getUserInfo accounts:', JSON.stringify(accounts.map(function (a) { return { accountId: a.accountId, isDefault: a.isDefault, baseUri: a.baseUri }; })));
+    console.log('env DOCUSIGN_ACCOUNT_ID:', accountId);
+    if (!acc) throw new Error('No matching DocuSign account found. env accountId: ' + accountId + ' | accounts: ' + JSON.stringify(accounts));
+    const resolvedAccountId = acc.accountId;
     const basePath = acc.baseUri + '/restapi/v2.1';
-    console.log('DocuSign basePath:', basePath, '| accountId used:', acc.accountId, '| matched env accountId:', acc.accountId === accountId);
+    console.log('DocuSign basePath:', basePath, '| resolvedAccountId:', resolvedAccountId, '| matched env:', resolvedAccountId === accountId);
 
     const apiClient = new docusign.ApiClient();
     apiClient.addDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
@@ -205,7 +208,7 @@ module.exports = async function handler(req, res) {
 
     console.log('Creating envelope for:', emailTrimmed, '| proposalId:', proposalId, '| pdfBytes:', pdfBuffer.length);
 
-    const createResult = await envelopesApi.createEnvelope(accountId, {
+    const createResult = await envelopesApi.createEnvelope(resolvedAccountId, {
       envelopeDefinition: envelopeDefinition,
     });
 
@@ -225,7 +228,7 @@ module.exports = async function handler(req, res) {
       userName: nameTrimmed,
     });
 
-    const viewResult = await envelopesApi.createRecipientView(accountId, envelopeId, {
+    const viewResult = await envelopesApi.createRecipientView(resolvedAccountId, envelopeId, {
       recipientViewRequest: viewRequest,
     });
 
