@@ -128,23 +128,23 @@ module.exports = async function handler(req, res) {
       throw new Error('JWT token request failed - no access_token');
     }
 
+    // Use getUserInfo to resolve the correct base_uri for this account
+    const oauthClient = new docusign.ApiClient();
+    oauthClient.setOAuthBasePath(authServer);
+    const userInfo = await oauthClient.getUserInfo(token.body.access_token);
+    const accounts = (userInfo && userInfo.accounts) || [];
+    const acc = accounts.find(function (a) {
+      return a.accountId === accountId;
+    }) || accounts.find(function (a) {
+      return a.isDefault === 'true' || a.isDefault === true;
+    }) || accounts[0];
+
+    if (!acc) throw new Error('No matching DocuSign account found for accountId: ' + accountId);
+    const basePath = acc.baseUri + '/restapi/v2.1';
+    console.log('DocuSign basePath:', basePath, '| accountId used:', acc.accountId, '| matched env accountId:', acc.accountId === accountId);
+
     const apiClient = new docusign.ApiClient();
     apiClient.addDefaultHeader('Authorization', 'Bearer ' + token.body.access_token);
-
-    // Resolve base path from token accounts; fallback based on authServer
-    let basePath;
-    const accounts = (token.body && token.body.accounts) || [];
-    const acc = accounts.find(function (a) {
-      return a.account_id === accountId || a.account_guid === accountId;
-    });
-    if (acc && acc.base_uri) {
-      basePath = acc.base_uri + '/restapi/v2.1';
-    } else if (authServer.includes('account-d.')) {
-      basePath = 'https://demo.docusign.net/restapi/v2.1';
-    } else {
-      basePath = 'https://na4.docusign.net/restapi/v2.1';
-    }
-    console.log('DocuSign basePath:', basePath, '| accounts in token:', accounts.length, '| matched:', !!acc);
     apiClient.setBasePath(basePath);
 
     const envelopesApi = new docusign.EnvelopesApi(apiClient);
