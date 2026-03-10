@@ -836,8 +836,10 @@
         if (result.data && result.data.fallback) {
           setAcceptedUI();
         } else {
-          var msg = (result.data && result.data.error ? result.data.error : 'Could not start signing.') + (result.data && result.data.detail ? '\n\n' + result.data.detail : '');
-          if (result.data && result.data.docusignBody) msg += '\n\nDocuSign response: ' + (typeof result.data.docusignBody === 'object' ? JSON.stringify(result.data.docusignBody) : result.data.docusignBody);
+          var msg = (result.data && result.data.error ? result.data.error : 'Could not start signing.');
+          if (result.data && result.data.detail) msg += '\n\n' + result.data.detail;
+          if (result.data && result.data.hint) msg += '\n\nHint: ' + result.data.hint;
+          if (result.data && result.data.docusignBody) msg += '\n\nDocuSign: ' + (typeof result.data.docusignBody === 'object' ? JSON.stringify(result.data.docusignBody) : result.data.docusignBody);
           alert(msg);
         }
       }

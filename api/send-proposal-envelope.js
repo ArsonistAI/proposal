@@ -81,19 +81,41 @@ module.exports = async function handler(req, res) {
     return jsonResponse(res, 503, { error: 'DocuSign not configured', fallback: true });
   }
 
+  function normalizePrivateKey(raw) {
+    // Handle escaped newlines (e.g. stored as literal \n in env var)
+    let k = raw.replace(/\\n/g, '\n');
+    // If still no real newlines, the key is a single line — reformat as PEM
+    if (!k.includes('\n')) {
+      const headerMatch = k.match(/^(-----[^-]+-----)(.+)(-----[^-]+-----)$/);
+      if (headerMatch) {
+        const header = headerMatch[1];
+        const b64 = headerMatch[2].replace(/\s/g, '');
+        const footer = headerMatch[3];
+        const lines = b64.match(/.{1,64}/g) || [b64];
+        k = header + '\n' + lines.join('\n') + '\n' + footer;
+      }
+    }
+    return k;
+  }
+
   function getToken() {
     return new Promise(function (resolve, reject) {
       const apiClient = new docusign.ApiClient();
       apiClient.setOAuthBasePath(authServer);
-      const keyBuf = Buffer.from(privateKey.replace(/\\n/g, '\n'), 'utf8');
+      const keyStr = normalizePrivateKey(privateKey);
+      console.log('JWT key length:', keyStr.length, '| has header:', keyStr.includes('BEGIN'), '| authServer:', authServer, '| userId:', userId, '| integrationKey:', integrationKey ? integrationKey.substring(0, 8) + '...' : 'MISSING');
       apiClient.requestJWTUserToken(
         integrationKey,
         userId,
         ['signature', 'impersonation'],
-        keyBuf,
+        Buffer.from(keyStr, 'utf8'),
         600,
         function (err, token) {
-          if (err) return reject(err);
+          if (err) {
+            const jwtBody = err && err.response && err.response.body;
+            console.error('JWT auth failed:', err.message, '| body:', JSON.stringify(jwtBody));
+            return reject(Object.assign(err, { isJwtError: true }));
+          }
           resolve(token);
         }
       );
@@ -222,17 +244,20 @@ module.exports = async function handler(req, res) {
       try { dsBody = dsBody.length ? JSON.parse(dsBody) : null; } catch (_) { dsBody = { raw: dsBody }; }
     }
     // Log everything so it appears in Vercel function logs
-    console.error('DocuSign error | message:', message, '| http status:', httpStatus, '| body:', JSON.stringify(dsBody));
+    console.error('DocuSign error | message:', message, '| http status:', httpStatus, '| body:', JSON.stringify(dsBody), '| isJwtError:', !!(err && err.isJwtError));
 
     let detail = message;
     if (dsBody && typeof dsBody === 'object') {
       if (dsBody.message) detail = dsBody.message;
+      if (dsBody.error) detail = dsBody.error + (dsBody.error_description ? ': ' + dsBody.error_description : '');
       if (dsBody.errorCode) detail += ' [' + dsBody.errorCode + ']';
     }
 
+    const isJwt = err && err.isJwtError;
     return jsonResponse(res, 502, {
-      error: 'Could not create signing session',
+      error: isJwt ? 'DocuSign authentication failed' : 'Could not create signing session',
       detail: detail,
+      hint: isJwt ? 'Check DOCUSIGN_PRIVATE_KEY format, DOCUSIGN_INTEGRATION_KEY, DOCUSIGN_USER_ID, and DOCUSIGN_AUTH_SERVER in Vercel env vars' : undefined,
       docusignStatus: httpStatus,
       docusignBody: dsBody || undefined,
     });
